@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: route-management
+    restart: always
+    environment:
+      DB_USER : pguser
+      DB_PASSWORD : pguser
+      DB_HOST : postgresql
+      DB_PORT : 5432
+      DB_NAME : pgdb
+      USERS_PATH :  
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/route-management
+    networks:
+      - route_net
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pguser
+      POSTGRES_DB: pgdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - route_net
+
+networks:
+  route_net:
+    driver: bridge
+
+volumes:
+  pgdata:
